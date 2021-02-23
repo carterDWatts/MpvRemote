@@ -1,4 +1,12 @@
 #!/bin/bash
 
-sudo rfcomm watch hci0
-exec python serial_reciever.py
+sudo bluetoothctl power on
+
+python serial_reciever.py & PIDMIX=$!
+sudo rfcomm watch hci0 & PIDIOS=$!
+
+wait $PIDMIX
+wait $PIDIOS
+
+trap 'kill $(jobs -p)' EXIT
+
